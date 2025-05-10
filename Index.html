@@ -30,7 +30,7 @@
       text-align: center;
       margin-bottom: 2rem;
     }
-    h1 {
+    h1, h2 {
       margin-bottom: 1rem;
       font-size: 2rem;
       color: #333;
@@ -119,7 +119,7 @@
       </div>
     </div>
   </div>
-  <div class="credit">Made by Alex Abdel Nour (best delegue)</div>
+  <div class="credit">Made with ❤️ by Alex Abdel Nour (best délégué)</div>
   <script>
     const student = { username: 'student', password: 'a8s9df7g' };
     const admin = { username: 'admin', password: 'superpass123' };
@@ -129,17 +129,31 @@
       const pass = document.getElementById('password').value;
       if ((user === student.username && pass === student.password) ||
           (user === admin.username && pass === admin.password)) {
+        localStorage.setItem('user', user);
         document.querySelector('.login').style.display = 'none';
         document.querySelector('.dashboard').style.display = 'block';
         if (user === admin.username) {
           document.getElementById('adminControls').style.display = 'block';
         }
+        loadAll();
       } else {
         alert('Invalid credentials.');
       }
     }
 
-    function createCard(content, containerId) {
+    window.onload = function() {
+      const user = localStorage.getItem('user');
+      if (user) {
+        document.querySelector('.login').style.display = 'none';
+        document.querySelector('.dashboard').style.display = 'block';
+        if (user === 'admin') {
+          document.getElementById('adminControls').style.display = 'block';
+        }
+        loadAll();
+      }
+    }
+
+    function createCard(content, containerId, storageKey, index) {
       const div = document.createElement('div');
       div.className = 'card';
       div.innerText = content;
@@ -147,35 +161,51 @@
       const btn = document.createElement('button');
       btn.innerText = 'Delete';
       btn.className = 'delete';
-      btn.onclick = () => div.remove();
-      div.appendChild(btn);
+      btn.onclick = () => {
+        const items = JSON.parse(localStorage.getItem(storageKey)) || [];
+        items.splice(index, 1);
+        localStorage.setItem(storageKey, JSON.stringify(items));
+        loadAll();
+      }
 
-      document.getElementById(containerId).prepend(div);
+      div.appendChild(btn);
+      document.getElementById(containerId).appendChild(div);
     }
 
     function addNews() {
-      const content = document.getElementById('newsInput').value;
-      if (content.trim() !== '') {
-        createCard('📰 ' + content, 'news');
-        document.getElementById('newsInput').value = '';
-      }
+      const input = document.getElementById('newsInput').value;
+      const news = JSON.parse(localStorage.getItem('news')) || [];
+      news.push(input);
+      localStorage.setItem('news', JSON.stringify(news));
+      document.getElementById('newsInput').value = '';
+      loadAll();
     }
 
     function addEvent() {
-      const content = document.getElementById('eventInput').value;
-      if (content.trim() !== '') {
-        createCard('📅 ' + content, 'events');
-        document.getElementById('eventInput').value = '';
-      }
+      const input = document.getElementById('eventInput').value;
+      const events = JSON.parse(localStorage.getItem('events')) || [];
+      events.push(input);
+      localStorage.setItem('events', JSON.stringify(events));
+      document.getElementById('eventInput').value = '';
+      loadAll();
     }
 
     function addCalendar() {
       const date = document.getElementById('calendarDate').value;
-      const content = document.getElementById('calendarInput').value;
-      if (date && content.trim() !== '') {
-        createCard('📌 ' + date + ': ' + content, 'calendar');
-        document.getElementById('calendarInput').value = '';
-      }
+      const text = document.getElementById('calendarInput').value;
+      const cal = JSON.parse(localStorage.getItem('calendar')) || [];
+      cal.push(`${date}: ${text}`);
+      localStorage.setItem('calendar', JSON.stringify(cal));
+      document.getElementById('calendarInput').value = '';
+      loadAll();
+    }
+
+    function loadAll() {
+      ['news', 'events', 'calendar'].forEach(key => {
+        const items = JSON.parse(localStorage.getItem(key)) || [];
+        document.getElementById(key).innerHTML = '';
+        items.forEach((item, i) => createCard(item, key, key, i));
+      });
     }
   </script>
 </body>
