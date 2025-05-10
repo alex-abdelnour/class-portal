@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Class Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #333;
+    }
+    input, button, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+    input, textarea, select {
+      background: #f1f5f9;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #4338ca;
+    }
+    .dashboard {
+      display: none;
+    }
+    .card {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+      position: relative;
+    }
+    .card button.delete {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ef4444;
+      font-size: 0.9rem;
+      padding: 0.3rem 0.6rem;
+    }
+    .admin-controls {
+      margin-top: 2rem;
+    }
+    #calendar {
+      margin-top: 2rem;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    .credit {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="login">
+      <h1>Login to Class Portal</h1>
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="login()">Login</button>
+    </div>
+    <div class="dashboard">
+      <h1>Welcome to the Class Portal</h1>
+      <div id="news"></div>
+      <div id="events"></div>
+      <div id="calendar"></div>
+      <div class="admin-controls" id="adminControls" style="display:none">
+        <h2>Post News</h2>
+        <textarea id="newsInput" placeholder="Write news..."></textarea>
+        <button onclick="addNews()">Add News</button>
+        <h2>Set Event</h2>
+        <textarea id="eventInput" placeholder="Write event..."></textarea>
+        <button onclick="addEvent()">Add Event</button>
+        <h2>Add to Calendar</h2>
+        <input type="date" id="calendarDate">
+        <textarea id="calendarInput" placeholder="Event on this date..."></textarea>
+        <button onclick="addCalendar()">Add to Calendar</button>
+      </div>
+    </div>
+  </div>
+  <div class="credit">Made by Alex Abdel Nour (best delegue)</div>
+  <script>
+    const student = { username: 'student', password: 'a8s9df7g' };
+    const admin = { username: 'admin', password: 'superpass123' };
+
+    function login() {
+      const user = document.getElementById('username').value;
+      const pass = document.getElementById('password').value;
+      if ((user === student.username && pass === student.password) ||
+          (user === admin.username && pass === admin.password)) {
+        document.querySelector('.login').style.display = 'none';
+        document.querySelector('.dashboard').style.display = 'block';
+        if (user === admin.username) {
+          document.getElementById('adminControls').style.display = 'block';
+        }
+      } else {
+        alert('Invalid credentials.');
+      }
+    }
+
+    function createCard(content, containerId) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerText = content;
+
+      const btn = document.createElement('button');
+      btn.innerText = 'Delete';
+      btn.className = 'delete';
+      btn.onclick = () => div.remove();
+      div.appendChild(btn);
+
+      document.getElementById(containerId).prepend(div);
+    }
+
+    function addNews() {
+      const content = document.getElementById('newsInput').value;
+      if (content.trim() !== '') {
+        createCard('📰 ' + content, 'news');
+        document.getElementById('newsInput').value = '';
+      }
+    }
+
+    function addEvent() {
+      const content = document.getElementById('eventInput').value;
+      if (content.trim() !== '') {
+        createCard('📅 ' + content, 'events');
+        document.getElementById('eventInput').value = '';
+      }
+    }
+
+    function addCalendar() {
+      const date = document.getElementById('calendarDate').value;
+      const content = document.getElementById('calendarInput').value;
+      if (date && content.trim() !== '') {
+        createCard('📌 ' + date + ': ' + content, 'calendar');
+        document.getElementById('calendarInput').value = '';
+      }
+    }
+  </script>
+</body>
+</html>
