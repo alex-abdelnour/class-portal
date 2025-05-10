@@ -93,6 +93,21 @@
     .signout {
       margin-top: 1rem;
     }
+    .password-container {
+      position: relative;
+      width: 100%;
+    }
+    .password-container button {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .password-container button i {
+      font-size: 20px;
+    }
   </style>
 </head>
 <body>
@@ -100,7 +115,12 @@
     <div class="login">
       <h1>Login to Class Portal</h1>
       <input type="text" id="username" placeholder="Username" />
-      <input type="password" id="password" placeholder="Password" />
+      <div class="password-container">
+        <input type="password" id="password" placeholder="Password" />
+        <button type="button" onclick="togglePasswordVisibility()">
+          <i id="eye-icon" class="fas fa-eye"></i>
+        </button>
+      </div>
       <button onclick="login()">Login</button>
     </div>
     <div class="dashboard">
@@ -111,6 +131,11 @@
       <div id="events"></div>
       <h2>Calendar</h2>
       <div id="calendar"></div>
+      <div id="cloudInfo" class="cloud-info">
+        <h2>Cloud Information</h2>
+        <p>Data from Cloud:</p>
+        <div id="cloudData"></div>
+      </div>
       <div class="admin-controls" id="adminControls" style="display:none">
         <h2>Post News</h2>
         <textarea id="newsInput" placeholder="Write news..."></textarea>
@@ -235,12 +260,29 @@
       renderList(newsList, 'news', 'news');
       renderList(eventList, 'events', 'events');
       renderList(calendarList, 'calendar', 'calendar');
+      document.getElementById('cloudData').innerHTML = `
+        <p>News: ${newsList.length} items</p>
+        <p>Events: ${eventList.length} items</p>
+        <p>Calendar: ${calendarList.length} events</p>
+      `;
     }
 
     function addCategory() {
       const name = document.getElementById('categoryInput').value;
       if (name) alert(`New category "${name}" added.`); // Placeholder for real category logic
       document.getElementById('categoryInput').value = '';
+    }
+
+    function togglePasswordVisibility() {
+      const passwordField = document.getElementById('password');
+      const eyeIcon = document.getElementById('eye-icon');
+      if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        eyeIcon.className = 'fas fa-eye-slash';
+      } else {
+        passwordField.type = 'password';
+        eyeIcon.className = 'fas fa-eye';
+      }
     }
 
     if (localStorage.getItem('user')) {
