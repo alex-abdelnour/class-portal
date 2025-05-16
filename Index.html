@@ -4,11 +4,112 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Portal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ... your existing styles ... */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 600px;
+      padding: 2rem;
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    h1, h2 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      color: #333;
+    }
+    input, button, textarea, select {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      border-radius: 10px;
+      border: none;
+      font-size: 1rem;
+    }
+    input, textarea, select {
+      background: #f1f5f9;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #4338ca;
+    }
+    .dashboard {
+      display: none;
+    }
+    .card {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: left;
+      position: relative;
+    }
+    .card button.delete {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ef4444;
+      font-size: 0.9rem;
+      padding: 0.3rem 0.6rem;
+    }
+    .admin-controls {
+      margin-top: 2rem;
+    }
+    #calendar {
+      margin-top: 2rem;
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    .credit {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 1rem;
+    }
+    .signout {
+      margin-top: 1rem;
+    }
+    .password-container {
+      position: relative;
+      width: 100%;
+    }
+    .password-container button {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .password-container button i {
+      font-size: 20px;
+    }
   </style>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <div class="container">
@@ -44,19 +145,18 @@
         <textarea id="eventInput" placeholder="Write event..."></textarea>
         <button onclick="addEvent()">Add Event</button>
         <h2>Add to Calendar</h2>
-        <input type="date" id="calendarDate">
+        <input type="date" id="calendarDate" />
         <textarea id="calendarInput" placeholder="Event on this date..."></textarea>
         <button onclick="addCalendar()">Add to Calendar</button>
         <h2>Add Category</h2>
-        <input type="text" id="categoryInput" placeholder="New category name">
+        <input type="text" id="categoryInput" placeholder="New category name" />
         <button onclick="addCategory()">Add Category</button>
       </div>
       <button class="signout" onclick="signOut()">Sign Out</button>
     </div>
   </div>
-  <div class="credit">Made by Alex Abdel Nour</div>
+  <div class="credit">Made by Alex (a2wa delegue)</div>
 
-  <!-- MAIN SCRIPT -->
   <script>
     const student = { username: 'student', password: 'a8s9df7g' };
     const admin = { username: 'admin', password: 'superpass123' };
@@ -70,20 +170,28 @@
     }
 
     function loadData() {
-      newsList = JSON.parse(localStorage.getItem('news')) || [];
-      eventList = JSON.parse(localStorage.getItem('events')) || [];
-      calendarList = JSON.parse(localStorage.getItem('calendar')) || [];
+      const savedNews = JSON.parse(localStorage.getItem('news')) || [];
+      const savedEvents = JSON.parse(localStorage.getItem('events')) || [];
+      const savedCalendar = JSON.parse(localStorage.getItem('calendar')) || [];
+      newsList = savedNews;
+      eventList = savedEvents;
+      calendarList = savedCalendar;
     }
 
     function login() {
-      const user = document.getElementById('username').value;
-      const pass = document.getElementById('password').value;
-      if ((user === student.username && pass === student.password) ||
-          (user === admin.username && pass === admin.password)) {
+      const user = document.getElementById('username').value.trim();
+      const pass = document.getElementById('password').value.trim();
+
+      if (
+        (user === student.username && pass === student.password) ||
+        (user === admin.username && pass === admin.password)
+      ) {
         localStorage.setItem('user', user);
         document.querySelector('.login').style.display = 'none';
         document.querySelector('.dashboard').style.display = 'block';
-        if (user === admin.username) document.getElementById('adminControls').style.display = 'block';
+        if (user === admin.username) {
+          document.getElementById('adminControls').style.display = 'block';
+        }
         loadData();
         displayAll();
       } else {
@@ -97,7 +205,7 @@
     }
 
     function addNews() {
-      const news = document.getElementById('newsInput').value;
+      const news = document.getElementById('newsInput').value.trim();
       if (news) {
         newsList.push(news);
         saveData();
@@ -107,7 +215,7 @@
     }
 
     function addEvent() {
-      const event = document.getElementById('eventInput').value;
+      const event = document.getElementById('eventInput').value.trim();
       if (event) {
         eventList.push(event);
         saveData();
@@ -118,7 +226,7 @@
 
     function addCalendar() {
       const date = document.getElementById('calendarDate').value;
-      const text = document.getElementById('calendarInput').value;
+      const text = document.getElementById('calendarInput').value.trim();
       if (date && text) {
         calendarList.push(`${date}: ${text}`);
         saveData();
@@ -162,62 +270,63 @@
       renderList(eventList, 'events', 'events');
       renderList(calendarList, 'calendar', 'calendar');
 
-      document.getElementById('cloudData').innerHTML = `
-        <p>News: ${newsList.length} items</p>
-        <p>Events: ${eventList.length} items</p>
-        <p>Calendar: ${calendarList.length} events</p>
-      `;
+      document.getElementById('cloudData').innerHTML =
+        `<p>News: ${newsList.length} items</p>
+         <p>Events: ${eventList.length} items</p>
+         <p>Calendar: ${calendarList.length} events</p>`;
     }
 
     function addCategory() {
-      const name = document.getElementById('categoryInput').value;
-      if (name) alert(`New category "${name}" added.`); // Placeholder
+      const name = document.getElementById('categoryInput').value.trim();
+      if (name) {
+        alert(`New category "${name}" added.`); // Placeholder for real category logic
+      }
       document.getElementById('categoryInput').value = '';
     }
 
     function togglePasswordVisibility() {
-      const passwordField = document.getElementById('password');
-      const eyeIcon = document.getElementById('eye-icon');
-      if (passwordField.type === 'password') {
-        passwordField.type = 'text';
-        eyeIcon.className = 'fas fa-eye-slash';
-      } else {
-        passwordField.type = 'password';
-        eyeIcon.className = 'fas fa-eye';
-      }
-    }
+  const passwordField = document.getElementById('password');
+  const eyeIcon = document.getElementById('eye-icon');
+  if (passwordField.type === 'password') {
+    passwordField.type = 'text';
+    eyeIcon.className = 'fas fa-eye-slash';
+  } else {
+    passwordField.type = 'password';
+    eyeIcon.className = 'fas fa-eye';
+  }
+}
 
-    // On load
-    if (localStorage.getItem('user')) {
-      document.querySelector('.login').style.display = 'none';
-      document.querySelector('.dashboard').style.display = 'block';
-      if (localStorage.getItem('user') === admin.username) {
-        document.getElementById('adminControls').style.display = 'block';
-      }
-      loadData();
-      displayAll();
-    }
-  </script>
+if (localStorage.getItem('user')) {
+  document.querySelector('.login').style.display = 'none';
+  document.querySelector('.dashboard').style.display = 'block';
+  if (localStorage.getItem('user') === admin.username) {
+    document.getElementById('adminControls').style.display = 'block';
+  }
+  loadData();
+  displayAll();
+}
+</script>
 
-  <!-- Optional: Firebase Integration Placeholder -->
-  <!-- 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-analytics.js";
+<script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-analytics.js";
 
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT.appspot.com",
-      messagingSenderId: "YOUR_SENDER_ID",
-      appId: "YOUR_APP_ID",
-      measurementId: "YOUR_MEASUREMENT_ID"
-    };
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyDyd6AaGMnP2FGYIKKwcRb6Q8d1YQrSYcc",
+    authDomain: "studentportalex.firebaseapp.com",
+    projectId: "studentportalex",
+    storageBucket: "studentportalex.firebasestorage.app",
+    messagingSenderId: "933359865709",
+    appId: "1:933359865709:web:9014abe2afc1edecded464",
+    measurementId: "G-ZSEB0ZQXXZ"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
-  </script>
-  -->
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+</script>
 </body>
 </html>
+
