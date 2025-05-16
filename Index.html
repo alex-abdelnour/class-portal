@@ -5,109 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Class Portal</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Inter', sans-serif;
-    }
-    body {
-      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-    .container {
-      background: white;
-      border-radius: 20px;
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-      width: 90%;
-      max-width: 600px;
-      padding: 2rem;
-      text-align: center;
-      margin-bottom: 2rem;
-    }
-    h1, h2 {
-      margin-bottom: 1rem;
-      font-size: 2rem;
-      color: #333;
-    }
-    input, button, textarea, select {
-      width: 100%;
-      padding: 0.75rem;
-      margin-top: 1rem;
-      border-radius: 10px;
-      border: none;
-      font-size: 1rem;
-    }
-    input, textarea, select {
-      background: #f1f5f9;
-    }
-    button {
-      background: #4f46e5;
-      color: white;
-      cursor: pointer;
-      font-weight: 600;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #4338ca;
-    }
-    .dashboard {
-      display: none;
-    }
-    .card {
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 1rem;
-      margin: 1rem 0;
-      text-align: left;
-      position: relative;
-    }
-    .card button.delete {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: #ef4444;
-      font-size: 0.9rem;
-      padding: 0.3rem 0.6rem;
-    }
-    .admin-controls {
-      margin-top: 2rem;
-    }
-    #calendar {
-      margin-top: 2rem;
-      background: #f9fafb;
-      border-radius: 12px;
-      padding: 1rem;
-    }
-    .credit {
-      text-align: center;
-      font-size: 0.9rem;
-      color: #555;
-      margin-bottom: 1rem;
-    }
-    .signout {
-      margin-top: 1rem;
-    }
-    .password-container {
-      position: relative;
-      width: 100%;
-    }
-    .password-container button {
-      position: absolute;
-      right: 10px;
-      top: 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-    .password-container button i {
-      font-size: 20px;
-    }
+    /* ... your existing styles ... */
   </style>
 </head>
 <body>
@@ -155,9 +55,13 @@
     </div>
   </div>
   <div class="credit">Made by Alex Abdel Nour</div>
+
+  <!-- MAIN SCRIPT -->
   <script>
     const student = { username: 'student', password: 'a8s9df7g' };
     const admin = { username: 'admin', password: 'superpass123' };
+
+    let newsList = [], eventList = [], calendarList = [];
 
     function saveData() {
       localStorage.setItem('news', JSON.stringify(newsList));
@@ -166,15 +70,10 @@
     }
 
     function loadData() {
-      const savedNews = JSON.parse(localStorage.getItem('news')) || [];
-      const savedEvents = JSON.parse(localStorage.getItem('events')) || [];
-      const savedCalendar = JSON.parse(localStorage.getItem('calendar')) || [];
-      newsList = savedNews;
-      eventList = savedEvents;
-      calendarList = savedCalendar;
+      newsList = JSON.parse(localStorage.getItem('news')) || [];
+      eventList = JSON.parse(localStorage.getItem('events')) || [];
+      calendarList = JSON.parse(localStorage.getItem('calendar')) || [];
     }
-
-    let newsList = [], eventList = [], calendarList = [];
 
     function login() {
       const user = document.getElementById('username').value;
@@ -240,6 +139,7 @@
     function displayAll() {
       const user = localStorage.getItem('user');
       const isAdmin = user === admin.username;
+
       const renderList = (list, containerId, type) => {
         const container = document.getElementById(containerId);
         container.innerHTML = '';
@@ -257,9 +157,11 @@
           container.appendChild(card);
         });
       };
+
       renderList(newsList, 'news', 'news');
       renderList(eventList, 'events', 'events');
       renderList(calendarList, 'calendar', 'calendar');
+
       document.getElementById('cloudData').innerHTML = `
         <p>News: ${newsList.length} items</p>
         <p>Events: ${eventList.length} items</p>
@@ -269,7 +171,7 @@
 
     function addCategory() {
       const name = document.getElementById('categoryInput').value;
-      if (name) alert(`New category "${name}" added.`); // Placeholder for real category logic
+      if (name) alert(`New category "${name}" added.`); // Placeholder
       document.getElementById('categoryInput').value = '';
     }
 
@@ -285,13 +187,37 @@
       }
     }
 
+    // On load
     if (localStorage.getItem('user')) {
       document.querySelector('.login').style.display = 'none';
       document.querySelector('.dashboard').style.display = 'block';
-      if (localStorage.getItem('user') === admin.username) document.getElementById('adminControls').style.display = 'block';
+      if (localStorage.getItem('user') === admin.username) {
+        document.getElementById('adminControls').style.display = 'block';
+      }
       loadData();
       displayAll();
     }
   </script>
+
+  <!-- Optional: Firebase Integration Placeholder -->
+  <!-- 
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-analytics.js";
+
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID",
+      measurementId: "YOUR_MEASUREMENT_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
+  -->
 </body>
 </html>
